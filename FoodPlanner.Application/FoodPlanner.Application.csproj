@@ -6,4 +6,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\FoodPlanner.Domain\FoodPlanner.Domain.csproj" />
+      <ProjectReference Include="..\FoodPlanner.Infrastructure\FoodPlanner.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="15.0.1" />
+    </ItemGroup>
+
 </Project>
