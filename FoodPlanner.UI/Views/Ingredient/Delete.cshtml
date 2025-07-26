@@ -1,0 +1,15 @@
+﻿@model FoodPlanner.Application.Dtos.IngredientDto
+@{
+    ViewData["Title"] = "Видалити інгредієнт";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h4>Ти впевнений, що хочеш видалити інгредієнт <strong>@Model.Name</strong>?</h4>
+
+<form asp-action="DeleteConfirmed" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger btn-sm">Видалити</button>
+    <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+</form>

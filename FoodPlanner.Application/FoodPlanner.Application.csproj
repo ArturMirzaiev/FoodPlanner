@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FoodPlanner.Domain\FoodPlanner.Domain.csproj" />
-      <ProjectReference Include="..\FoodPlanner.Infrastructure\FoodPlanner.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

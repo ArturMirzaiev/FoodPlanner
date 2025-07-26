@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\FoodPlanner.Application\FoodPlanner.Application.csproj" />
       <ProjectReference Include="..\FoodPlanner.Domain\FoodPlanner.Domain.csproj" />
     </ItemGroup>
 
