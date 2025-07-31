@@ -1,7 +1,12 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using FoodPlanner.Application.Dtos;
-using FoodPlanner.Application.Interfaces;
+﻿using FoodPlanner.Application.Ingredients.Dtos;
+using FoodPlanner.Application.Ingredients.Features.Create;
+using FoodPlanner.Application.Ingredients.Features.Delete;
+using FoodPlanner.Application.Ingredients.Features.GetAll;
+using FoodPlanner.Application.Ingredients.Features.GetById;
+using FoodPlanner.Application.Ingredients.Features.Update;
+using FoodPlanner.Domain.Core.Common;
+using FoodPlanner.Domain.Core.Constants;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,93 +15,65 @@ namespace FoodPlanner.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize] 
-public class IngredientController : ControllerBase
+public class IngredientController(IMediator mediator) : ControllerBase
 {
-    private readonly IIngredientService _ingredientService;
-
-    public IngredientController(IIngredientService ingredientService)
-    {
-        _ingredientService = ingredientService;
-    }
-
     [HttpGet]
-    public async Task<IActionResult> GetAvailableIngredients(CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<List<IngredientDto>?>>> GetIngredients(CancellationToken cancellationToken)
     {
-        var userId = GetCurrentUserId();
-        var ingredients = await _ingredientService.GetAvailableIngredientsAsync(userId, cancellationToken);
-        return Ok(ingredients);
+        var ingredients = await mediator.Send(new GetIngredientsQuery(), cancellationToken);
+
+        return Ok(ApiResponse<List<IngredientDto>?>.SuccessResponse(ingredients));
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<IngredientDto>>> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var userId = GetCurrentUserId();
-        var ingredient = await _ingredientService.GetByIdAsync(id, userId, cancellationToken);
+        var ingredient = await mediator.Send(new GetIngredientByIdQuery(id), cancellationToken);
 
-        if (ingredient is null)
-            return NotFound();
-
-        return Ok(ingredient);
+        return Ok(
+            ApiResponse<IngredientDto>.SuccessResponse(
+                ingredient, IngredientMessages.RetrievedSuccessfully));
     }
 
+    [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateIngredientDto createIngredientDto, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<IngredientDto>>> CreateIngredient(
+        [FromBody] CreateIngredientCommand command, CancellationToken cancellationToken)
     {
-        if (createIngredientDto == null)
-            return BadRequest("Ingredient data is required.");
-
-        var userId = GetCurrentUserId();
-        var createdIngredient = await _ingredientService.AddAsync(createIngredientDto, userId, cancellationToken);
-
-        return CreatedAtAction(nameof(GetById), new { id = createdIngredient.Id }, createdIngredient);
+        var createdIngredient = await mediator.Send(command, cancellationToken);
+        
+        return CreatedAtAction(
+            nameof(GetById), 
+            new { id = createdIngredient.Id }, 
+            ApiResponse<IngredientDto>.SuccessResponse(createdIngredient, IngredientMessages.CreatedSuccessfully));
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateIngredientDto updateIngredientDto, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<IngredientDto>>> UpdateIngredient(
+        [FromRoute] Guid id, 
+        [FromBody] UpdateIngredientCommand command, 
+        CancellationToken cancellationToken)
     {
-        if (updateIngredientDto == null)
-            return BadRequest("Ingredient data is required.");
-
-        if (id != updateIngredientDto.Id)
-            return BadRequest("Id mismatch.");
-
-        var userId = GetCurrentUserId();
-
-        try
+        if (id != command.Id)
         {
-            await _ingredientService.UpdateAsync(updateIngredientDto, userId, cancellationToken);
-            return NoContent();
+            return BadRequest(ApiResponse<IngredientDto>.FailureResponse(
+                    IngredientMessages.IdMismatch, 
+                IngredientMessages.InvalidRequest));
         }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        
+        var updatedIngredient = await mediator.Send(command, cancellationToken);
+
+        return Ok(
+            ApiResponse<IngredientDto>.SuccessResponse(
+                updatedIngredient, 
+                IngredientMessages.UpdatedSuccessfully));
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var userId = GetCurrentUserId();
+        await mediator.Send(new DeleteIngredientCommand(id), cancellationToken);
 
-        try
-        {
-            await _ingredientService.DeleteAsync(id, userId, cancellationToken);
-            
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    private Guid GetCurrentUserId()
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst(JwtRegisteredClaimNames.Sub);
-
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            throw new UnauthorizedAccessException("User is not authenticated or userId claim is invalid.");
-
-        return userId;
+        return NoContent();
     }
 }

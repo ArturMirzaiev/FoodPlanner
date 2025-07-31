@@ -4,7 +4,13 @@ namespace FoodPlanner.Domain.Exceptions;
 
 public abstract class DomainException : Exception
 {
-    public abstract HttpStatusCode StatusCode { get; }
+    public HttpStatusCode StatusCode { get; }
+    public string SubCode { get; }
 
-    protected DomainException(string message) : base(message) { }
+    public DomainException(string message, HttpStatusCode statusCode, string subCode)
+        : base(message)
+    {
+        StatusCode = statusCode;
+        SubCode = subCode;
+    }
 }

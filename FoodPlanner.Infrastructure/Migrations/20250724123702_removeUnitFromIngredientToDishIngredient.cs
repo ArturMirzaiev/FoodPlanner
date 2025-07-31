@@ -13,7 +13,7 @@ namespace FoodPlanner.Infrastructure.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Unit",
-                table: "Ingredients");
+                table: "Ingredient");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
@@ -28,7 +28,7 @@ namespace FoodPlanner.Infrastructure.Migrations
         {
             migrationBuilder.AddColumn<int>(
                 name: "Unit",
-                table: "Ingredients",
+                table: "Ingredient",
                 type: "int",
                 maxLength: 10,
                 nullable: false,
@@ -42,28 +42,28 @@ namespace FoodPlanner.Infrastructure.Migrations
                 values: new object[] { "b455bdb2-6cc7-498f-af3b-7e7279289601", "AQAAAAIAAYagAAAAEFWYT9RACOvYfvr5mFhQwO9g20poK1vdqiDNYg9N+iVaycL5FUj0YSi6nmo43B8crw==", "99f4c8be-7c60-478c-84fa-ccdb90994d80" });
 
             migrationBuilder.UpdateData(
-                table: "Ingredients",
+                table: "Ingredient",
                 keyColumn: "Id",
                 keyValue: new Guid("7e36a395-6da1-4189-b072-2f702cc2eeed"),
                 column: "Unit",
                 value: 0);
 
             migrationBuilder.UpdateData(
-                table: "Ingredients",
+                table: "Ingredient",
                 keyColumn: "Id",
                 keyValue: new Guid("acc23aee-8bb6-417b-a24e-92f471cb531d"),
                 column: "Unit",
                 value: 0);
 
             migrationBuilder.UpdateData(
-                table: "Ingredients",
+                table: "Ingredient",
                 keyColumn: "Id",
                 keyValue: new Guid("e0b781b9-1d53-41ac-a645-997ace341929"),
                 column: "Unit",
                 value: 1);
 
             migrationBuilder.UpdateData(
-                table: "Ingredients",
+                table: "Ingredient",
                 keyColumn: "Id",
                 keyValue: new Guid("e9f880ad-9920-47eb-97ac-69f4969bbd5e"),
                 column: "Unit",

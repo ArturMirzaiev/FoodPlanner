@@ -1,7 +1,8 @@
-﻿using FoodPlanner.Application.Dtos;
+﻿using FoodPlanner.Application.Authentication.Dtos;
+using FoodPlanner.Application.Authentication.Features.Login;
+using FoodPlanner.Application.Authentication.Features.Register;
 using FoodPlanner.Domain.Core.Common;
-using FoodPlanner.Domain.Responses;
-using FoodPlanner.Features.Authentication.Commands;
+using FoodPlanner.Domain.Core.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,8 @@ public class AuthController : ControllerBase
     {
         var result = await _mediator.Send(command);
 
-        if (!result.IsSuccess)
-            return BadRequest(ApiResponse<LoginResponseDto>.FailureResponse(result.Errors, "Login failed"));
-
-        return Ok(ApiResponse<LoginResponseDto>.SuccessResponse(result.Value!, "Login successful"));
+        return Ok(ApiResponse<LoginResponseDto>
+            .SuccessResponse(result, AuthenticationMessages.LoginSuccessfull));
     }
     
     [HttpPost("register")]
@@ -36,11 +35,8 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<ApiResponse<RegisterResponseDto>>> Register([FromBody] RegisterUserCommand command, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);
-        if (!result.IsSuccess)
-        {
-            return BadRequest(ApiResponse<RegisterResponseDto>.FailureResponse(result.Errors, "Registration failed."));
-        }
         
-        return Ok(ApiResponse<RegisterResponseDto>.SuccessResponse(result.Value!, "Registration successful."));
+        return Ok(ApiResponse<RegisterResponseDto>
+            .SuccessResponse(result, AuthenticationMessages.RegistrationSuccessfull));
     }
 }

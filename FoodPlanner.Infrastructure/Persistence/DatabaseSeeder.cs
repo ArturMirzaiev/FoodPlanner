@@ -1,6 +1,5 @@
 ﻿using FoodPlanner.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace FoodPlanner.Infrastructure.Persistence;
 
@@ -17,6 +16,6 @@ public class DatabaseSeeder
 
     public async Task SeedAsync()
     {
-        
+        // empty
     }
 }

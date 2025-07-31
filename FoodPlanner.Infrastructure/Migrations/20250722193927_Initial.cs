@@ -159,7 +159,7 @@ namespace FoodPlanner.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ingredients",
+                name: "Ingredient",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -204,7 +204,7 @@ namespace FoodPlanner.Infrastructure.Migrations
                 values: new object[] { new Guid("3f9f79aa-d1e3-4c4c-a4ab-2797d22708a7"), 0, "5a495663-6157-4e3c-a227-4d80d6d0641d", "aresmi@example.com", true, false, null, "ARESMI@EXAMPLE.COM", "ARESMI", "AQAAAAIAAYagAAAAEFOqEUoqT2GC0dvS/W0OwxrPwX0hTPUPwv2zn6/Zdvctc5zPATM6HqcO8mfGpZwyVQ==", null, false, "9f2e738d-8f08-456f-adf2-1657df9459e2", false, "aresmi" });
 
             migrationBuilder.InsertData(
-                table: "Ingredients",
+                table: "Ingredient",
                 columns: new[] { "Id", "Name", "Source", "Unit", "UserId" },
                 values: new object[,]
                 {
@@ -264,7 +264,7 @@ namespace FoodPlanner.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ingredients_UserId",
-                table: "Ingredients",
+                table: "Ingredient",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -292,7 +292,7 @@ namespace FoodPlanner.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Ingredients");
+                name: "Ingredient");
 
             migrationBuilder.DropTable(
                 name: "Persons");
