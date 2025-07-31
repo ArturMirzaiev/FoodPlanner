@@ -1,9 +1,6 @@
-﻿using FoodPlanner.Application.Dtos;
-using FoodPlanner.Application.Interfaces;
-using FoodPlanner.Domain.Core.Common;
+﻿using FoodPlanner.Application.Authentication.Dtos;
+using FoodPlanner.Application.Authentication.Services.Contracts;
 using FoodPlanner.Domain.Entities;
-using FoodPlanner.Domain.Enums;
-using FoodPlanner.Domain.Responses;
 
 namespace FoodPlanner.Infrastructure.Services;
 
@@ -11,63 +8,62 @@ public class AuthService : IAuthService
 {
     private readonly IUserService _userService;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly IUserClaimsService _userClaimsService;
 
-    public AuthService(IUserService userService, IJwtTokenService jwtTokenService, IUserClaimsService userClaimsService)
+    public AuthService(IUserService userService, IJwtTokenService jwtTokenService)
     {
         _userService = userService;
         _jwtTokenService = jwtTokenService;
-        _userClaimsService = userClaimsService;
     }
 
-    public async Task<Result<LoginResponseDto>> LoginAsync(LoginDto dto, CancellationToken cancellationToken)
+    public async Task<LoginResponseDto> LoginAsync(LoginDto dto, CancellationToken cancellationToken)
     {
+        if (dto is null)
+            throw new ArgumentNullException(nameof(dto));
+        
         var user = await _userService.FindByNameAsync(dto.Username, cancellationToken);
-        if (user == null)
-            return Result<LoginResponseDto>.Failure("Invalid username or password");
+        if (user is null)
+            throw new KeyNotFoundException($"User with username '{dto.Username}' was not found.");
 
         var isPasswordValid = await _userService.CheckPasswordAsync(user, dto.Password, cancellationToken);
         if (!isPasswordValid)
-            return Result<LoginResponseDto>.Failure("Invalid username or password");
-        
-        var claims = await _userClaimsService.GetClaimsAsync(user, cancellationToken);
-        if (claims is null || !claims.Any())
-            return Result<LoginResponseDto>.Failure("User has no claims");
-        
-        var tokenResult = await _jwtTokenService.GenerateToken(claims);
-        return Result<LoginResponseDto>.Success(tokenResult);
+            throw new UnauthorizedAccessException("Invalid password.");
+
+        var roles = await _userService.GetUserRolesAsync(user, cancellationToken);
+
+        var tokenResult = await _jwtTokenService.GenerateTokenAsync(user, roles, cancellationToken);
+
+        return new LoginResponseDto
+        {
+            Username = dto.Username,
+            TokenInfo = tokenResult
+        };
     }
 
-    public async Task<Result<RegisterResponseDto>> RegisterAsync(RegisterDto dto, CancellationToken cancellationToken)
+    public async Task<RegisterResponseDto> RegisterAsync(RegisterDto dto, CancellationToken cancellationToken)
     {
+        if (dto is null)
+            throw new ArgumentNullException(nameof(dto));
+
         var user = new ApplicationUser
         {
+            Id = Guid.NewGuid(),
             UserName = dto.Username,
-            Email = dto.Email,
+            Email = dto.Email
         };
+        var roleName = dto.Role.ToString();
 
-        var createResult = await _userService.CreateUserAsync(user, dto.Password, cancellationToken);
-        if (!createResult.IsSuccess)
-            return Result<RegisterResponseDto>.Failure(createResult.Errors);
+        await _userService.CreateUserAsync(user, dto.Password, cancellationToken);
 
-        if (!await _userService.RoleExistsAsync(dto.Role.ToString(), cancellationToken))
-        {
-            var roleCreateResult = await _userService.CreateRoleAsync(dto.Role.ToString(), cancellationToken);
-            if (!roleCreateResult.IsSuccess)
-                return Result<RegisterResponseDto>.Failure(roleCreateResult.Errors);
-        }
+        if (!await _userService.RoleExistsAsync(roleName, cancellationToken))
+            await _userService.CreateRoleAsync(roleName, cancellationToken);
 
-        var addToRoleResult = await _userService.AddUserToRoleAsync(user, dto.Role.ToString(), cancellationToken);
-        if (!addToRoleResult.IsSuccess)
-            return Result<RegisterResponseDto>.Failure(addToRoleResult.Errors);
+        await _userService.AddUserToRoleAsync(user, roleName, cancellationToken);
 
-        var responseDto = new RegisterResponseDto
+        return new RegisterResponseDto
         {
             UserId = user.Id,
-            Username = user.UserName,
-            Role = dto.Role.ToString()
+            Username = user.UserName!,
+            Role = roleName
         };
-
-        return Result<RegisterResponseDto>.Success(responseDto);
     }
 }

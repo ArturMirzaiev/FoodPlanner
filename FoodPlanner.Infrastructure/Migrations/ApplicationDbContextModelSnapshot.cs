@@ -124,7 +124,7 @@ namespace FoodPlanner.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredient");
 
                     b.HasData(
                         new
@@ -306,7 +306,7 @@ namespace FoodPlanner.Infrastructure.Migrations
             modelBuilder.Entity("FoodPlanner.Domain.Entities.Ingredient", b =>
                 {
                     b.HasOne("FoodPlanner.Domain.Entities.ApplicationUser", "User")
-                        .WithMany("Ingredients")
+                        .WithMany("Ingredient")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -366,7 +366,7 @@ namespace FoodPlanner.Infrastructure.Migrations
 
             modelBuilder.Entity("FoodPlanner.Domain.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("Ingredients");
+                    b.Navigation("Ingredient");
                 });
 #pragma warning restore 612, 618
         }

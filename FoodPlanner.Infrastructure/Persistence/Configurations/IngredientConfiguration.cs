@@ -24,8 +24,6 @@ public class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
         ConfigureUserIngredients(builder);
     }
 
-    
-    
     private void ConfigureSystemIngredients(EntityTypeBuilder<Ingredient> builder)
     {
         builder.HasData(

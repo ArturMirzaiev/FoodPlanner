@@ -4,7 +4,7 @@ public class ApiResponse<T>
 {
     public bool Success { get; init; }
     public string? Message { get; init; }
-    public List<string>? Errors { get; init; }
+    public string? Code { get; init; }
     public T? Data { get; init; }
 
     public static ApiResponse<T> SuccessResponse(T data, string? message = null) => new()
@@ -14,10 +14,9 @@ public class ApiResponse<T>
         Data = data
     };
 
-    public static ApiResponse<T> FailureResponse(List<string> errors, string? message = null) => new()
+    public static ApiResponse<T> FailureResponse(string? code = null, string? message = null) => new()
     {
         Success = false,
-        Message = message,
-        Errors = errors
+        Message = message
     };
 }

@@ -8,11 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodPlanner.Application", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodPlanner.Infrastructure", "FoodPlanner.Infrastructure\FoodPlanner.Infrastructure.csproj", "{F2728D26-088B-4498-A960-DF2C4849E974}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodPlanner.UI", "FoodPlanner.UI\FoodPlanner.UI.csproj", "{7F109E96-6A0C-4B30-BEF1-FB48EBAA405C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodPlanner.Tests", "FoodPlanner.Tests\FoodPlanner.Tests.csproj", "{CF370DC9-6ECE-4848-91AF-81D6B3D48DBC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodPlanner.Features", "FoodPlanner.Features\FoodPlanner.Features.csproj", "{27A92513-92D8-45DB-AD4D-38948C9162B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,17 +32,9 @@ Global
 		{F2728D26-088B-4498-A960-DF2C4849E974}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2728D26-088B-4498-A960-DF2C4849E974}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2728D26-088B-4498-A960-DF2C4849E974}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F109E96-6A0C-4B30-BEF1-FB48EBAA405C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F109E96-6A0C-4B30-BEF1-FB48EBAA405C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F109E96-6A0C-4B30-BEF1-FB48EBAA405C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F109E96-6A0C-4B30-BEF1-FB48EBAA405C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CF370DC9-6ECE-4848-91AF-81D6B3D48DBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CF370DC9-6ECE-4848-91AF-81D6B3D48DBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF370DC9-6ECE-4848-91AF-81D6B3D48DBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF370DC9-6ECE-4848-91AF-81D6B3D48DBC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{27A92513-92D8-45DB-AD4D-38948C9162B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{27A92513-92D8-45DB-AD4D-38948C9162B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{27A92513-92D8-45DB-AD4D-38948C9162B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{27A92513-92D8-45DB-AD4D-38948C9162B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

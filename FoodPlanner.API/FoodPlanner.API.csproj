@@ -20,7 +20,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FoodPlanner.Application\FoodPlanner.Application.csproj" />
-      <ProjectReference Include="..\FoodPlanner.Features\FoodPlanner.Features.csproj" />
       <ProjectReference Include="..\FoodPlanner.Infrastructure\FoodPlanner.Infrastructure.csproj" />
     </ItemGroup>
 

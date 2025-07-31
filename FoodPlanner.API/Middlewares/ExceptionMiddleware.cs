@@ -2,64 +2,75 @@
 using System.Text.Json;
 using FoodPlanner.Domain.Core.Common;
 using FoodPlanner.Domain.Exceptions;
-using FoodPlanner.Domain.Responses;
 
 namespace FoodPlanner.API.Middlewares;
 
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
-        _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext httpContext)
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(httpContext);
+            await _next(context);
+        }
+        catch (DomainException dex)
+        {
+            await HandleDomainExceptionAsync(context, dex);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception occurred");
-            await HandleExceptionAsync(httpContext, ex);
+            await HandleExceptionAsync(context, ex);
         }
     }
-
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
-    {
-        var code = HttpStatusCode.InternalServerError;
     
-        switch (exception)
-        {
-            case KeyNotFoundException:
-                code = HttpStatusCode.NotFound;
-                break;
-            case UnauthorizedAccessException:
-                code = HttpStatusCode.Unauthorized;
-                break;
-            case InvalidOperationException:
-                code = HttpStatusCode.BadRequest;
-                break;
-            case DomainException domainEx:
-                code = domainEx.StatusCode;
-                break;
-        }
+    private static Task HandleDomainExceptionAsync(HttpContext context, DomainException exception)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)exception.StatusCode;
 
-        var errorDetails = new ErrorDetails
+        var response = ApiResponse<string>.FailureResponse(
+            exception.SubCode,
+            exception.Message
+        );
+        
+        var json = JsonSerializer.Serialize(response);
+
+        return context.Response.WriteAsync(json);
+    }
+    
+    private Task HandleExceptionAsync(HttpContext context, Exception exception)
+    {
+        context.Response.ContentType = "application/json";
+
+        var statusCode = exception switch
         {
-            StatusCode = (int)code,
-            Message = exception.Message,
-            Details = exception.InnerException?.Message
+            ArgumentNullException => (int)HttpStatusCode.BadRequest,
+            ArgumentException => (int)HttpStatusCode.BadRequest,
+            UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
+            KeyNotFoundException => (int)HttpStatusCode.NotFound,
+            InvalidOperationException => (int)HttpStatusCode.BadRequest,
+            _ => (int)HttpStatusCode.InternalServerError
         };
 
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = errorDetails.StatusCode;
+        context.Response.StatusCode = statusCode;
 
-        return context.Response.WriteAsync(errorDetails.ToString());
+        var isInternalServerError = statusCode == (int)HttpStatusCode.InternalServerError;
+
+        var response = ApiResponse<string>.FailureResponse(
+            message: isInternalServerError 
+                ? "Internal Server Error. Please contact support." 
+                : exception.Message
+        );
+
+        var json = JsonSerializer.Serialize(response);
+
+        return context.Response.WriteAsync(json);
     }
 }
