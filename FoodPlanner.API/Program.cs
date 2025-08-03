@@ -24,6 +24,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseMiddleware<ExceptionMiddleware>();
+// app.UseMiddleware<ExceptionMiddleware>();
 
 app.Run();
+
+public partial class Program {}

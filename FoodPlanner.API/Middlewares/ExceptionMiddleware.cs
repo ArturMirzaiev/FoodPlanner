@@ -51,12 +51,11 @@ public class ExceptionMiddleware
 
         var statusCode = exception switch
         {
-            ArgumentNullException => (int)HttpStatusCode.BadRequest,
-            ArgumentException => (int)HttpStatusCode.BadRequest,
-            UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
-            KeyNotFoundException => (int)HttpStatusCode.NotFound,
-            InvalidOperationException => (int)HttpStatusCode.BadRequest,
-            _ => (int)HttpStatusCode.InternalServerError
+            NotFoundException => StatusCodes.Status404NotFound,
+            UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+            // ArgumentException => StatusCodes.Status400BadRequest,
+            InvalidOperationException => StatusCodes.Status400BadRequest,
+            _ => StatusCodes.Status500InternalServerError
         };
 
         context.Response.StatusCode = statusCode;

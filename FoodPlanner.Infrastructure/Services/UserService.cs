@@ -15,17 +15,17 @@ public class UserService : IUserService
         _roleManager = roleManager;
     }
 
-    public async Task<ApplicationUser?> FindByNameAsync(string username, CancellationToken cancellationToken)
+    public async Task<ApplicationUser?> FindByNameAsync(string username, CancellationToken cancellationToken = default)
     {
         return await _userManager.FindByNameAsync(username);
     }
 
-    public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password, CancellationToken cancellationToken)
+    public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password, CancellationToken cancellationToken = default)
     {
         return await _userManager.CheckPasswordAsync(user, password);
     }
 
-    public async Task CreateUserAsync(ApplicationUser user, string password, CancellationToken cancellationToken)
+    public async Task CreateUserAsync(ApplicationUser user, string password, CancellationToken cancellationToken = default)
     {
         var result = await _userManager.CreateAsync(user, password);
         if (!result.Succeeded)
@@ -33,14 +33,15 @@ public class UserService : IUserService
     }
 
 
-    public async Task<bool> RoleExistsAsync(string roleName, CancellationToken cancellationToken)
+    public async Task<bool> RoleExistsAsync(string roleName, CancellationToken cancellationToken = default)
     {
         return await _roleManager.RoleExistsAsync(roleName);
     }
     
-    public async Task CreateRoleAsync(string roleName, CancellationToken cancellationToken)
+    public async Task CreateRoleAsync(string roleName, CancellationToken cancellationToken = default)
     {
-        var result = await _roleManager.CreateAsync(new IdentityRole<Guid>(roleName));
+        var identityRole = new IdentityRole<Guid>(roleName);   
+        var result = await _roleManager.CreateAsync(identityRole);
         if (!result.Succeeded)
             throw new InvalidOperationException(string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}")));
     }
@@ -51,7 +52,7 @@ public class UserService : IUserService
         return await _userManager.GetRolesAsync(user);
     }
 
-    public async Task AddUserToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+    public async Task AddUserToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken = default)
     {
         var result = await _userManager.AddToRoleAsync(user, roleName);
         if (!result.Succeeded)

@@ -1,6 +1,7 @@
 ﻿using FoodPlanner.Application.Authentication.Dtos;
 using FoodPlanner.Application.Authentication.Services.Contracts;
 using FoodPlanner.Domain.Entities;
+using FoodPlanner.Domain.Exceptions;
 
 namespace FoodPlanner.Infrastructure.Services;
 
@@ -22,7 +23,7 @@ public class AuthService : IAuthService
         
         var user = await _userService.FindByNameAsync(dto.Username, cancellationToken);
         if (user is null)
-            throw new KeyNotFoundException($"User with username '{dto.Username}' was not found.");
+            throw new NotFoundException("User not found.");
 
         var isPasswordValid = await _userService.CheckPasswordAsync(user, dto.Password, cancellationToken);
         if (!isPasswordValid)

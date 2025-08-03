@@ -9,7 +9,7 @@ using FoodPlanner.Infrastructure.Services;
 using Moq;
 using Xunit;
 
-namespace FoodPlanner.Tests.Ingredients.IngredientServiceTests;
+namespace FoodPlanner.Tests.Ingredients.Services.IngredientServiceTests;
 
 public class GetCurrentUserIngredientAsyncTests
 {

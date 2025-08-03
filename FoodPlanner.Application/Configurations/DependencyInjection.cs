@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +8,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        var currentAssembly = Assembly.GetExecutingAssembly();
+        var currentAssembly = typeof(DependencyInjection).Assembly;
         
         services.AddMediatR(cfg => 
             cfg.RegisterServicesFromAssembly(currentAssembly));
